@@ -101,7 +101,7 @@ if args.make_video:
         os.mkdir('steps')
 
 # Make save every directory
-if args.save_every:
+if args.display_freq:
     os.makedirs("out_images", exist_ok=True)
 
 # Functions and classes
