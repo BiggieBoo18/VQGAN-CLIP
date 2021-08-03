@@ -57,6 +57,7 @@ vq_parser.add_argument("-p",    "--prompts", type=str, help="Text prompts", defa
 vq_parser.add_argument("-ip",   "--image_prompts", type=str, help="Image prompts / target image", default=[], dest='image_prompts')
 vq_parser.add_argument("-i",    "--iterations", type=int, help="Number of iterations", default=500, dest='max_iterations')
 vq_parser.add_argument("-se",   "--save_every", type=int, help="Save image iterations", default=50, dest='display_freq')
+vq_parser.add_argument("-pr",   "--prefix", type=str, help="Save image name prefix", default='', dest='prefix')
 vq_parser.add_argument("-s",    "--size", nargs=2, type=int, help="Image size (width height) (default: %(default)s)", default=[default_image_size,default_image_size], dest='size')
 vq_parser.add_argument("-ii",   "--init_image", type=str, help="Initial image", default=None, dest='init_image')
 vq_parser.add_argument("-in",   "--init_noise", type=str, help="Initial noise image (pixels or gradient)", default='pixels', dest='init_noise')
@@ -102,7 +103,7 @@ if args.make_video:
 
 # Make save every directory
 if args.display_freq:
-    os.makedirs("out_images", exist_ok=True)
+    os.makedirs(f"{args.prefix}_out_images", exist_ok=True)
 
 # Functions and classes
 def sinc(x):
@@ -508,11 +509,11 @@ def checkin(i, losses):
     out = synth(z)
     info = PngImagePlugin.PngInfo()
     info.add_text('comment', f'{args.prompts}')
-    TF.to_pil_image(out[0].cpu()).save(args.output, pnginfo=info)
+    TF.to_pil_image(out[0].cpu()).save(f'{args.prefix}_{args.output}', pnginfo=info)
     # save every image in out_images
     img = np.array(out.mul(255).clamp(0, 255)[0].cpu().detach().numpy().astype(np.uint8))[:,:,:]
     img = np.transpose(img, (1, 2, 0))
-    imageio.imwrite('./out_images/' + str(i) + '.png', np.array(img))
+    imageio.imwrite(f'./{args.prefix}_out_images/' + str(i) + '.png', np.array(img))
 
 
 def ascend_txt():
