@@ -103,7 +103,7 @@ if args.make_video:
 
 # Make save every directory
 if args.display_freq:
-    os.makedirs(f"{args.prefix}_out_images", exist_ok=True)
+    os.makedirs(f"out/{args.prefix}_out_images", exist_ok=True)
 
 # Functions and classes
 def sinc(x):
@@ -509,11 +509,11 @@ def checkin(i, losses):
     out = synth(z)
     info = PngImagePlugin.PngInfo()
     info.add_text('comment', f'{args.prompts}')
-    TF.to_pil_image(out[0].cpu()).save(f'{args.prefix}_{args.output}', pnginfo=info)
+    TF.to_pil_image(out[0].cpu()).save(f'out/{args.prefix}_{args.output}', pnginfo=info)
     # save every image in out_images
     img = np.array(out.mul(255).clamp(0, 255)[0].cpu().detach().numpy().astype(np.uint8))[:,:,:]
     img = np.transpose(img, (1, 2, 0))
-    imageio.imwrite(f'./{args.prefix}_out_images/' + str(i) + '.png', np.array(img))
+    imageio.imwrite(f'./out/{args.prefix}_out_images/' + str(i) + '.png', np.array(img))
 
 
 def ascend_txt():
